@@ -1,10 +1,17 @@
+const canvas = document.getElementById("canvasJuego");
+const ctx = canvas.getContext("2d");
+const tamanoCelda = 30;
+const lineaX = 5;
+const lineaY = 1;
+const serpiente = [
+  {x:5,y:6},
+  {x:4,y:6},
+  {x:4,y:7},
+  {x:4,y:8},
+  {x:3,y:8},
+  {x:3,y:9}
+];
 
-    // 1. Capturamos el canvas y su contexto de dibujo
-    const canvas = document.getElementById("canvasJuego");
-    const ctx = canvas.getContext("2d");
-    const tamanoCelda = 30;
-    const lineaX = 5;
-    const lineaY = 1;
 
   dibujarTablero=function(){
     ctx.strokeStyle="white";
@@ -57,13 +64,31 @@ function iniciarJuego(){
 function pintarParte(lineaX, lineaY){
   let valorx = lineaX * tamanoCelda;
   let valory = lineaY * tamanoCelda;
-  ctx.fillStyle = "yellow";
+  ctx.fillStyle = "blue";
   ctx.fillRect(valorx, valory, tamanoCelda, tamanoCelda);
 
-  ctx.strokeStyle = "orange";
+  ctx.strokeStyle = "blue";
   ctx.strokeRect(valorx, valory, tamanoCelda, tamanoCelda)
 }
 
+function pintarSerpiente(){
+  let movimiento;
+  for(let i = 0; i < serpiente.length; i++){
+    movimiento = serpiente[i]
+    if (i == 0){
+      let valorX = movimiento.x * tamanoCelda;
+      let valorY = movimiento.y * tamanoCelda;
+      ctx.fillStyle = "cyan";
+      ctx.fillRect(valorX, valorY, tamanoCelda, tamanoCelda);
+      ctx.strokeStyle = "cyan";
+      ctx.strokeRect(valorX, valorY, tamanoCelda, tamanoCelda);
+    } else {
+    valorx = movimiento.x
+    valory = movimiento.y
+    pintarParte(valorx, valory)
+    }
+  }
+}
 
 function limpiarCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -72,12 +97,7 @@ function limpiarCanvas() {
 function dibujarTodo() {
   limpiarCanvas()
   dibujarTablero2()
-  pintarParte(5, 5);
-  pintarParte(10, 2);
-  pintarParte((canvas.height-tamanoCelda)/tamanoCelda, (canvas.width-tamanoCelda)/tamanoCelda);
-  pintarParte((canvas.height-tamanoCelda)/tamanoCelda, 10);
-  pintarParte(0, (canvas.width-tamanoCelda)/tamanoCelda);
-  pintarParte((canvas.height-tamanoCelda)/tamanoCelda, 0);
+  pintarSerpiente()
 }
 
 dibujarTodo();
