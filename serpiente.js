@@ -2,16 +2,17 @@ const canvas = document.getElementById("canvasJuego");
 const ctx = canvas.getContext("2d");
 const tamanoCelda = 30;
 let puntaje = 0;
-let direccionActual;
+let direccionActual = "derecha";
+let juegoFinalizado = false;
 const lineaX = 5;
 const lineaY = 1;
-const serpiente = [
+let serpiente = [
+  {x:7,y:6},
+  {x:6,y:6},
   {x:5,y:6},
   {x:4,y:6},
-  {x:4,y:7},
-  {x:4,y:8},
-  {x:3,y:8},
-  {x:3,y:9}
+  {x:3,y:6},
+  {x:2,y:6}
 ];
 
 function dibujarTablero(){
@@ -100,7 +101,11 @@ function cambiarDireccion(direccion){
 }
 
 function iniciarJuego(){
-  intervaloSerpiente = setInterval(moverSerpiente,1000)
+  if(juegoFinalizado == true){
+    return;
+  } 
+
+  intervaloSerpiente = setInterval(moverSerpiente,400)
 }
 
 function pausarJuego(){
@@ -132,7 +137,7 @@ function moverSerpiente(){
       x: colaActual.x - 1,
       y: colaActual.y }
     }
-    if(direccionActual == "izquierdo"){
+    if(direccionActual == "izquierda"){
       colaNueva = {
       x: colaActual.x + 1,
       y: colaActual.y }
@@ -150,7 +155,23 @@ function moverSerpiente(){
     serpiente.push(colaNueva);
     generarComida()
   }
+  verificarCondicionBordes()
   dibujarTodo()
+}
+
+function verificarCondicionBordes(){
+  let cabeza = serpiente[0];
+  if(cabeza.x < 0 || cabeza.x >= canvas.width / tamanoCelda){
+    pausarJuego()
+    document.getElementById("estado").innerHTML= "Game Over"
+    juegoFinalizado = true
+    desabilitarBotones()
+  } else if(cabeza.y < 0 || cabeza.y >= canvas.height / tamanoCelda){
+    pausarJuego()
+    document.getElementById("estado").innerHTML= "Game Over"
+    juegoFinalizado = true
+    desabilitarBotones()
+  }
 }
 
 function generarComida(){
@@ -173,8 +194,58 @@ function atraparComida(){
   }
 }
 
+function reiniciarJuego(){
+  puntaje = 0
+  document.getElementById("puntaje").innerHTML = puntaje;
+  document.getElementById("estado").innerHTML= "Listo"
+  direccionActual = "derecha";
+  serpiente = [
+  {x:4,y:8},
+  {x:3,y:8},
+  {x:2,y:8},
+  {x:1,y:8}
+  ];
+  juegoFinalizado = false
+  intervaloSerpiente = setInterval(moverSerpiente,400)
+  generarComida()
+  habilitarBotones()
+  dibujarTodo()
+}
+
 function limpiarCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function desabilitarBotones(){
+  let arriba = document.getElementById("arriba");
+  arriba.disabled = true;
+  let abajo = document.getElementById("abajo");
+  abajo.disabled = true;
+  let derecha = document.getElementById("derecha");
+  derecha.disabled = true;
+  let izquierda = document.getElementById("izquierda");
+  izquierda.disabled = true;
+  let iniciar = document.getElementById("iniciar");
+  iniciar.disabled = true;
+  let pausar = document.getElementById("pausar");
+  pausar.disabled = true;
+  let reiniciar = document.getElementById("reiniciar");
+  reiniciar.disabled = false;
+}
+
+function habilitarBotones(){
+  let arriba = document.getElementById("arriba");
+  arriba.disabled = false;
+  let abajo = document.getElementById("abajo");
+  abajo.disabled = false;
+  let derecha = document.getElementById("derecha");
+  derecha.disabled = false;
+  let izquierda = document.getElementById("izquierda");
+  izquierda.disabled = false;
+  let iniciar = document.getElementById("iniciar");
+  iniciar.disabled = false;
+  let reiniciar = document.getElementById("reiniciar");
+  reiniciar.disabled = true;
 }
 
 function dibujarTodo() {
@@ -184,6 +255,7 @@ function dibujarTodo() {
   pintarComida()
 }
 
+habilitarBotones()
 generarComida()
 dibujarTodo();
 
