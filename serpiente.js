@@ -4,15 +4,14 @@ const tamanoCelda = 30;
 let puntaje = 0;
 let direccionActual = "derecha";
 let juegoFinalizado = false;
+let velocidad = 500
 const lineaX = 5;
 const lineaY = 1;
 let serpiente = [
   {x:7,y:6},
   {x:6,y:6},
   {x:5,y:6},
-  {x:4,y:6},
-  {x:3,y:6},
-  {x:2,y:6}
+  {x:4,y:6}
 ];
 
 function dibujarTablero(){
@@ -105,11 +104,15 @@ function iniciarJuego(){
     return;
   } 
 
-  intervaloSerpiente = setInterval(moverSerpiente,400)
+  intervaloSerpiente = setInterval(moverSerpiente,velocidad)
+  let iniciar = document.getElementById("iniciar");
+  iniciar.disabled = true;
 }
 
 function pausarJuego(){
   clearInterval(intervaloSerpiente)
+  let iniciar = document.getElementById("iniciar");
+  iniciar.disabled = false;
 }
 
 function moverSerpiente(){
@@ -129,6 +132,9 @@ function moverSerpiente(){
     puntaje = puntaje + 1
     let puntos = document.getElementById("puntaje")
     puntos.innerHTML = puntaje;
+    velocidad = velocidad - 20;
+    clearInterval(intervaloSerpiente)
+    intervaloSerpiente = setInterval(moverSerpiente,velocidad)
 
     let colaActual = serpiente[serpiente.length - 1]
     let colaNueva
@@ -196,6 +202,7 @@ function atraparComida(){
 
 function reiniciarJuego(){
   puntaje = 0
+  velocidad = 500
   document.getElementById("puntaje").innerHTML = puntaje;
   document.getElementById("estado").innerHTML= "Listo"
   direccionActual = "derecha";
@@ -206,7 +213,7 @@ function reiniciarJuego(){
   {x:1,y:8}
   ];
   juegoFinalizado = false
-  intervaloSerpiente = setInterval(moverSerpiente,400)
+  intervaloSerpiente = setInterval(moverSerpiente,velocidad)
   generarComida()
   habilitarBotones()
   dibujarTodo()
