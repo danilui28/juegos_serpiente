@@ -5,6 +5,7 @@ let puntaje = 0;
 let direccionActual = "derecha";
 let juegoFinalizado = false;
 let velocidad = 500
+let nivel = 1;
 const lineaX = 5;
 const lineaY = 1;
 let serpiente = [
@@ -130,9 +131,15 @@ function moverSerpiente(){
 
   if (colisionComida == true){
     puntaje = puntaje + 1
+    if(puntaje % 3 == 0){
+      nivel++;
+      document.getElementById("nivel").innerHTML = nivel;
+      if(velocidad > 100){
+      velocidad = velocidad - 40;
+      }
+    }
     let puntos = document.getElementById("puntaje")
     puntos.innerHTML = puntaje;
-    velocidad = velocidad - 20;
     clearInterval(intervaloSerpiente)
     intervaloSerpiente = setInterval(moverSerpiente,velocidad)
 
@@ -162,6 +169,7 @@ function moverSerpiente(){
     generarComida()
   }
   verificarCondicionBordes()
+  verificarColisionCuerpo()
   dibujarTodo()
 }
 
@@ -219,6 +227,35 @@ function reiniciarJuego(){
   dibujarTodo()
 }
 
+function cambiarDireccion(direccion){
+  if(direccion == "izquierda" && direccionActual == "derecha"){
+    return;
+  }
+  if(direccion == "derecha" && direccionActual == "izquierda"){
+    return;
+  }
+  if(direccion == "arriba" && direccionActual == "abajo"){
+    return;
+  }
+  if(direccion == "abajo" && direccionActual == "arriba"){
+    return;
+  }
+  direccionActual = direccion;
+}
+
+function verificarColisionCuerpo(){
+  let cabeza = serpiente[0];
+  for(let i = 1; i < serpiente.length; i++){
+    let parte = serpiente[i];
+    if(cabeza.x == parte.x && cabeza.y == parte.y){
+      pausarJuego();
+      document.getElementById("estado").innerHTML = "Game Over";
+      juegoFinalizado = true;
+      desabilitarBotones();
+    }
+  }
+}
+
 function limpiarCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
@@ -261,6 +298,26 @@ function dibujarTodo() {
   pintarSerpiente()
   pintarComida()
 }
+
+document.addEventListener("keydown",function(event){
+
+  if(event.key == "ArrowUp"){
+    cambiarDireccion("arriba");
+  }
+
+  if(event.key == "ArrowDown"){
+    cambiarDireccion("abajo");
+  }
+
+  if(event.key == "ArrowLeft"){
+    cambiarDireccion("izquierda");
+  }
+
+  if(event.key == "ArrowRight"){
+    cambiarDireccion("derecha");
+  }
+
+});
 
 habilitarBotones()
 generarComida()
